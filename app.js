@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var twitter = require('./server/services/twitter.js')(app);
 
 
 app.get('/',function(req, res){
