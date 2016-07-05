@@ -4,6 +4,12 @@
   "description": "ChatTV : Chattez en direct avec les telespectateurs sur une même chaine !",
   "main": "app.js",
   "dependencies": {
+    "async": "^1.5.2",
+    "express": "^4.14.0",
+    "fs": "0.0.2",
+    "node-cron": "^1.1.1",
+    "request": "^2.72.0",
+    "socket.io": "^1.4.8"
   },
   "devDependencies": {},
   "scripts": {
