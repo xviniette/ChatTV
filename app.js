@@ -1,7 +1,10 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
-var twitter = require('./server/services/twitter.js')(app);
+var twitter = require('./server/services/channels.js')(app);
+
+
+
 
 
 app.get('/',function(req, res){
@@ -12,6 +15,7 @@ app.get('/*', function (req, res) {
   var file = req.params[0]; 
   res.sendFile( __dirname + '/public/' + file );
 });
+
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
