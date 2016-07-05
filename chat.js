@@ -12,7 +12,6 @@ var channels = [];
 var users = {};
 
 cron.schedule('* * * * *', function(){
-    console.log("channels");
     channelsManager.getChannels(function(ch){
         channels = ch;
     });
@@ -20,6 +19,7 @@ cron.schedule('* * * * *', function(){
 
 channelsManager.getChannels(function(ch){
     channels = ch;
+    setUsers();
 });
 
 app.get("/channels", function(req, res){
@@ -31,8 +31,19 @@ app.use(express.static("public"));
 http.listen(3000);
 
 var setUsers = function(){
-    
+    for(var i in channels){
+        channels[i].users = 0;
+        for(var j in users){
+            if(channels[i].id == users[j].room){
+                channels[i].users++;
+            }
+        }
+    }
 }
+
+setInterval(function(){
+    setUsers();
+}, 60 * 1000);
 
 io.on("connection", function(socket){
     users[socket.id] = {
@@ -43,17 +54,22 @@ io.on("connection", function(socket){
     socket.on("leave", function(){
         if(users[socket.id].room != null){
             socket.leave(users[socket.id].room);
+            users[socket.id].room = null;
+            socket.emit("leave");
         }
     });
 
     socket.on("join", function(id){
         if(users[socket.id].room != null){
             socket.leave(users[socket.id].room);
+            users[socket.id].room = null;
+            socket.emit("leave");
         }
-
         for(var i in channels){
             if(channels[i].id == id){
+                users[socket.id].room = channels[i].id;
                 socket.join(channels[i].id);
+                socket.emit("join", channels[i].id);
             }
         }
     });

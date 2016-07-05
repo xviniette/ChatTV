@@ -6,7 +6,16 @@
 <body id="app">
 
     <ul>
-        <li v-for="channel in channels"><img src="{{channel.logo}}">{{channel.name}}</li>
+        <li v-for="message in messages">{{message.user.pseudo}} : {{message.msg}}</li>
+    </ul>
+
+    <form v-on:submit.prevent="send()">
+        <input type="text" v-model="message" placeholder="message">
+        <input type="submit" value="send">
+    </form>
+
+    <ul>
+        <li v-for="channel in channels" @click="join(channel.id)"><img src="{{channel.logo}}">{{channel.name}}</li>
     </ul>
 
 
