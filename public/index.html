@@ -5,6 +5,17 @@
 </head>
 <body id="app">
 
+    <div v-if="room != null">
+        {{room.name}}
+        <div v-for="program in room.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">
+            {{program.title}}
+            <div style="background-color:blue;width:{{(now - program.diffusionDate)/program.duration * 100}}%;height:10px">
+                {{timeleft(program.duration - (now - program.diffusionDate))}}
+            </div>
+        </div>
+        {{room.users}} users
+    </div>
+
     <ul>
         <li v-for="message in messages">{{message.user.pseudo}} : {{message.msg}}</li>
     </ul>
@@ -14,14 +25,25 @@
         <input type="submit" value="send">
     </form>
 
+    <input type="text" placeholder="search" v-model="search">
     <ul>
-        <li v-for="channel in channels" @click="join(channel.id)"><img src="{{channel.logo}}">{{channel.name}}</li>
+        <li v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
+            <img src="{{channel.logo}}">
+            {{channel.name}}
+            <div v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">
+                {{program.title}}
+                <div style="background-color:blue;width:{{(now - program.diffusionDate)/program.duration * 100}}%;height:10px">
+                    {{timeleft(program.duration - (now - program.diffusionDate))}}
+                </div>
+            </div>
+            {{channel.users}} users
+        </li>
     </ul>
 
 
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
-<script src="./js/app.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+    <script src="./js/app.js"></script>
 </body>
 </html>

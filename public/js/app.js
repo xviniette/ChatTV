@@ -8,8 +8,10 @@ $(function(){
       data: {
         channels:[],
         messages:[],
+        search:"",
         message:"",
         room:null,
+        now:Math.floor(Date.now()/1000)
     },
     methods:{
         join:function(id){
@@ -18,9 +20,21 @@ $(function(){
         send:function(){
             socket.emit("msg", this.message);
             this.message = "";
+        },
+        timeleft:function(time){
+            var hours = Math.floor(time/3600);
+            var minutes = Math.floor((time - hours*3600)/60);
+            if(hours > 0){
+                return hours+"h "+minutes+"m";
+            }
+            return minutes+"m";
         }
     }
 });
+
+    setInterval(function(){
+        vues.app.now = Math.floor(Date.now()/1000);
+    }, 1000);
 
     socket.on("join", function(id){
         vues.app.messages = [];
@@ -44,10 +58,22 @@ $(function(){
         }
     });
 
-    $.get("/channels", function(res){
-        vues.app.$set("channels", res)
-    });
+    var loadChannels = function(){
+        $.get("/channels", function(res){
+            vues.app.$set("channels", res);
+            if(vues.app.room != null){
+                for(var i in res){
+                    if(res[i].id == vues.app.room.id){
+                        vues.app.room = res[i];
+                    }
+                }
+            }
+        });
+    }
 
-
+    loadChannels();
+    setInterval(function(){
+        loadChannels();
+    }, 60 * 1000);
 
 });
