@@ -47,7 +47,8 @@ setInterval(function(){
 
 io.on("connection", function(socket){
     users[socket.id] = {
-        pseudo:"Guest-"+Math.floor(Math.random()*1000),
+        pseudo:"ElBazia",
+        nbPseudo:0,
         room:null
     }
 
@@ -67,12 +68,32 @@ io.on("connection", function(socket){
         }
         for(var i in channels){
             if(channels[i].id == id){
+                var found = false;
+                var cpt = 0;
+                while(!found){
+                    var exist = false;
+                    for(var j in users){
+                        if(users[j].room == channels[i].id && users[j].pseudo == users[socket.id].pseudo && users[j].nbPseudo == cpt){
+                            exist = true;
+                            break;
+                        }
+                    }
+                    if(!exist){
+                        users[socket.id].nbPseudo = cpt;
+                        found = true;
+                    }
+                    cpt++;
+                }
                 users[socket.id].room = channels[i].id;
                 socket.join(channels[i].id);
                 socket.emit("join", channels[i].id);
             }
         }
     });
+
+    socket.on("pseudo", function(pseudo){
+        users[socket.id].pseudo = pseudo;
+    })
 
     socket.on("msg", function(msg){
         if(users[socket.id].room != null){

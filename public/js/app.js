@@ -32,6 +32,7 @@ $(function(){
     }
 });
 
+
     setInterval(function(){
         vues.app.now = Math.floor(Date.now()/1000);
     }, 1000);
