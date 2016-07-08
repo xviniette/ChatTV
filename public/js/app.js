@@ -53,6 +53,7 @@ $(function(){
         },
         lobby:function(){
             show("lobby");
+            socket.emit("leave");
         }
     }
 });
