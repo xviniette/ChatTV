@@ -2,14 +2,21 @@
 <html lang="fr" ng-app="ChatTV">
 <head>
     <title>ChatTV</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body id="app">
     <div class="app">
-        <div id="home">
-
+        <div id="home" class="panel center">
+            Home
+            <form v-on:submit.prevent="setPseudo()">
+                <input type="text" placeholder="Pseudo" v-model="pseudo">
+                <input type="submit" value="Connexion">
+            </form>
         </div>
-        <div id="lobby">
-            <input type="text" placeholder="search" v-model="search">
+        <div id="lobby" class="panel right">
+            <div class="infobar">
+                <input type="text" placeholder="search" v-model="search">
+            </div>
             <ul>
                 <li v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
                     <img src="{{channel.logo}}">
@@ -24,7 +31,8 @@
                 </li>
             </ul>
         </div>
-        <div id="channel">
+        <div id="channel" class="panel right">
+            <button @click="lobby()">Previous</button>
             <div v-if="room != null">
                 {{room.name}}
                 <div v-for="program in room.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">

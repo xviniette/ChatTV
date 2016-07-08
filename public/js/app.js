@@ -1,11 +1,25 @@
 var vues = {};
 var socket;
 
+var show = function(element){
+    var elem = $("#"+element);
+    if(!elem.hasClass("center")){
+        if(elem.hasClass("left")){
+            $(".center").removeClass("center").addClass("right");
+            elem.removeClass("left").addClass("center");
+        }else{
+            $(".center").removeClass("center").addClass("left");
+            elem.removeClass("right").addClass("center");
+        }
+    }
+}
+
 $(function(){
     socket = io();
     vues.app = new Vue({
       el: '#app',
       data: {
+        pseudo:"",
         channels:[],
         messages:[],
         search:"",
@@ -16,6 +30,7 @@ $(function(){
     methods:{
         join:function(id){
             socket.emit("join", id);
+            show("channel");
         },
         send:function(){
             socket.emit("msg", this.message);
@@ -28,9 +43,28 @@ $(function(){
                 return hours+"h "+minutes+"m";
             }
             return minutes+"m";
+        },
+        setPseudo:function(){
+            if(this.pseudo.length > 0){
+                socket.emit("pseudo", this.pseudo);
+                localStorage.setItem("pseudo", this.pseudo);
+                this.lobby();
+            }
+        },
+        lobby:function(){
+            show("lobby");
         }
     }
 });
+
+
+var pseudo = localStorage.getItem("pseudo");
+
+if(pseudo != undefined){
+    vues.app.pseudo = localStorage.getItem("pseudo");
+    vues.app.setPseudo();
+}
+
 
 
     setInterval(function(){
