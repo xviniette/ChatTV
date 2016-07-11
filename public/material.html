@@ -22,14 +22,14 @@
             </div>
 
             <ul class="collection">
-                <li class="collection-item row valign-wrapper" v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
+                <li class="row collection-item valign-wrapper" v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
 
-                  <div class="col s2 valign">
+                  <div class="col s4 valign">
                     <img src="{{channel.logo}}" class="responsive-img">
                     <span class="hide">{{channel.name}}</span>
                   </div>
 
-                  <div class="col s8 valign">
+                  <div class="col s3">
                     <div v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now" class="truncate">
                         {{program.title}}
                     </div>
@@ -48,11 +48,11 @@
                       {{channel.users}}
                     </div>
 
-                    <div class="col s12 blue darken-2" v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now" style="height:10px;">
+                   <!--  <div class="col s12 blue darken-2" v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now" style="height:10px;">
                       <div class="progress">
       <div class="determinate" style="width: {{(now - program.diffusionDate)/program.duration * 100}}%"></div>
   </div>
-                  </div>
+                  </div> -->
                 </li>
             </ul>
         </div>
