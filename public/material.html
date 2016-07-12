@@ -9,33 +9,40 @@
   <body id="app">
 
     <div class="app flow-text">
-        <div id="home" class="panel center">
-            Home
-            <form v-on:submit.prevent="setPseudo()">
-                <input type="text" placeholder="Pseudo" v-model="pseudo">
-                <input type="submit" value="Connexion">
-            </form>
+      <div id="home" class="panel center">
+        Home
+        <form v-on:submit.prevent="setPseudo()">
+          <input type="text" placeholder="Pseudo" v-model="pseudo">
+          <input type="submit" value="Connexion">
+        </form>
+      </div>
+      <div id="lobby" class="panel right">
+        <div class="navbar">
+          <nav>
+            <div class="nav-wrapper">
+              <div class="input-field">
+                <i class="material-icons prefix">search</i>
+                <input type="text" class="validate" v-model="search" placeholder="Search">
+              </div>
+            </div>
+          </nav>
         </div>
-        <div id="lobby" class="panel right">
-            <div class="infobar">
-                <input type="text" placeholder="search" v-model="search">
+
+        <ul class="collection">
+          <li class="row collection-item valign-wrapper" v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
+
+            <div class="col s4 valign">
+              <img src="{{channel.logo}}" class="responsive-img">
+              <span class="hide">{{channel.name}}</span>
             </div>
 
-            <ul class="collection">
-                <li class="row collection-item valign-wrapper" v-for="channel in channels | filterBy search | orderBy 'users' -1" @click="join(channel.id)">
+            <div class="col s3">
+              <div v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now" class="truncate">
+                {{program.title}}
+              </div>
+            </div>
 
-                  <div class="col s4 valign">
-                    <img src="{{channel.logo}}" class="responsive-img">
-                    <span class="hide">{{channel.name}}</span>
-                  </div>
 
-                  <div class="col s3">
-                    <div v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now" class="truncate">
-                        {{program.title}}
-                    </div>
-                  </div>
-
-                    
                   <!--   {{channel.name}}
                     <div v-for="program in channel.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">
                         {{program.title}}
@@ -52,39 +59,50 @@
                       <div class="progress">
       <div class="determinate" style="width: {{(now - program.diffusionDate)/program.duration * 100}}%"></div>
   </div>
-                  </div> -->
-                </li>
-            </ul>
-        </div>
-        <div id="channel" class="panel right">
-            <button @click="lobby()">Previous</button>
-            <div v-if="room != null">
-                {{room.name}}
-                <div v-for="program in room.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">
-                    {{program.title}}
-                    <div style="background-color:blue;width:{{(now - program.diffusionDate)/program.duration * 100}}%;height:10px">
-                        {{timeleft(program.duration - (now - program.diffusionDate))}}
-                    </div>
-                </div>
-                {{room.users}} users
+</div> -->
+</li>
+</ul>
+</div>
+<div id="channel" class="panel right">
+  <div class="navbar">
+    <nav>
+      <div class="nav-wrapper">
+        <div v-if="room != null">
+          <img src="{{room.logo}}" class="responsive-img">
+          <div v-for="program in room.programs" v-if="program.diffusionDate <= now && program.diffusionDate + program.duration > now">
+            {{program.title}}
+            <div style="background-color:blue;width:{{(now - program.diffusionDate)/program.duration * 100}}%;height:10px">
+              {{timeleft(program.duration - (now - program.diffusionDate))}}
             </div>
-
-            <ul>
-                <li v-for="message in messages">{{message.user.pseudo}} <span v-if="message.user.nbPseudo > 0">({{message.user.nbPseudo}})</span> : {{message.msg}}</li>
-            </ul>
-
-            <form v-on:submit.prevent="send()">
-                <input type="text" v-model="message" placeholder="message">
-                <input type="submit" value="send">
-            </form>
+          </div>
+          {{room.users}} users
         </div>
-    </div>
 
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/lib/materialize.min.js"></script>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
-    <script src="./js/app.js"></script>
-  </body>
-  </html>
+        <a class="btn-floating btn-large waves-effect waves-light red" @click="lobby()"><i class="material-icons">skip_previous</i></a>
+      </div>
+    </nav>
+  </div>
+
+
+  
+
+  <ul>
+    <li v-for="message in messages">{{message.user.pseudo}} <span v-if="message.user.nbPseudo > 0">({{message.user.nbPseudo}})</span> : {{message.msg}}</li>
+  </ul>
+
+  <form v-on:submit.prevent="send()">
+    <input type="text" v-model="message" placeholder="message">
+    <input type="submit" value="send">
+  </form>
+</div>
+</div>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="js/lib/materialize.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
